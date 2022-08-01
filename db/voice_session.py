@@ -1,7 +1,24 @@
 from datetime import datetime, timezone
-from db.get_active_voice_session import get_active_voice_session_by_user
+from statbot.models import VoiceSession
 from db.database_utils import db_connect_and_cursor
 from loguru import logger
+
+
+def get_active_voice_session_by_user(user_id):
+    voice_session = None
+    try:
+        con, cur = db_connect_and_cursor()
+        query = "SELECT * FROM user_voice_sessions WHERE user_id=%s AND left_at IS null ORDER BY joined_at DESC LIMIT 1"
+        cur.execute(query, (user_id, ))
+        result = cur.fetchone()
+        con.commit()
+        con.close()
+        if result:
+            voice_session = VoiceSession(result[0], result[1], result[2], result[3], result[4], result[5], result[6])
+        return voice_session
+    except Exception as ex:
+        logger.exception("An error occurred while getting active session from DB:")
+        print(ex)
 
 
 def save_join_datetime(member, channel):
@@ -40,4 +57,23 @@ def save_leave_datetime(member, channel):
             logger.warning("No active session found")
     except Exception as ex:
         logger.exception("An error occurred while saving left_at datetime in DB:")
+        print(ex)
+
+
+def get_total_time_ranking_by_guild(guild_id):
+    try:
+        con, cur = db_connect_and_cursor()
+        query = "SELECT user_id, SUM(total_time) " \
+                "FROM user_voice_sessions " \
+                "WHERE guild_id = (%s) AND left_at IS NOT NULL " \
+                "GROUP BY user_id " \
+                "ORDER BY SUM(total_time) DESC "
+        cur.execute(query, (guild_id, ))
+        result = cur.fetchall()
+        con.commit()
+        logger.info(f"Selected {cur.rowcount} voice sessions in guild {guild_id}")
+        con.close()
+        return result
+    except Exception as ex:
+        logger.exception("An error occurred while getting guild voice sessions:")
         print(ex)
