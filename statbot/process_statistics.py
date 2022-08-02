@@ -1,6 +1,6 @@
 from statbot.utils import total_time_to_hours_minutes
-from statbot.models import VoiceSession
-from db.voice_session import get_total_time_ranking_by_guild
+from statbot.classes import VoiceSession
+from db.statistics import get_total_time_ranking_by_guild
 
 
 def process_voice_sessions_for_statistics(guild_id):
