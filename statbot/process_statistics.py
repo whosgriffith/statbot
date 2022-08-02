@@ -3,8 +3,8 @@ from statbot.classes import VoiceSession
 from db.statistics import get_total_time_ranking_by_guild
 
 
-def process_voice_sessions_for_statistics(guild_id):
-    raw_voice_sessions = get_total_time_ranking_by_guild(guild_id)
+def process_voice_sessions_for_statistics(guild_id, afk_channel=False):
+    raw_voice_sessions = get_total_time_ranking_by_guild(guild_id, afk_channel)
 
     voice_session_list = []
     for session in raw_voice_sessions:

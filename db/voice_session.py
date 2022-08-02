@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from statbot.models import VoiceSession
+from statbot.classes import VoiceSession
 from db.database_utils import db_connect_and_cursor
 from loguru import logger
 
@@ -23,14 +23,15 @@ def get_active_voice_session_by_user(user_id):
 
 def save_join_datetime(member, channel):
     active_voice_session = get_active_voice_session_by_user(member.id)
+    is_afk = member.guild.afk_channel == channel
 
     if not active_voice_session:
         try:
             con, cur = db_connect_and_cursor()
-            query = "INSERT INTO user_voice_sessions (user_id, guild_id, channel_id, joined_at) " \
-                    "VALUES (%s, %s, %s, %s)"
+            query = "INSERT INTO user_voice_sessions (user_id, guild_id, channel_id, joined_at, afk_channel) " \
+                    "VALUES (%s, %s, %s, %s, %s)"
             joined_at = datetime.now(timezone.utc)
-            cur.execute(query, (member.id, member.guild.id, channel.id, joined_at))
+            cur.execute(query, (member.id, member.guild.id, channel.id, joined_at, is_afk))
             con.commit()
             logger.info(f"Join datetime of {member.id} in voice channel {channel.id} saved")
             con.close()
@@ -57,23 +58,4 @@ def save_leave_datetime(member, channel):
             logger.warning("No active session found")
     except Exception as ex:
         logger.exception("An error occurred while saving left_at datetime in DB:")
-        print(ex)
-
-
-def get_total_time_ranking_by_guild(guild_id):
-    try:
-        con, cur = db_connect_and_cursor()
-        query = "SELECT user_id, SUM(total_time) " \
-                "FROM user_voice_sessions " \
-                "WHERE guild_id = (%s) AND left_at IS NOT NULL " \
-                "GROUP BY user_id " \
-                "ORDER BY SUM(total_time) DESC "
-        cur.execute(query, (guild_id, ))
-        result = cur.fetchall()
-        con.commit()
-        logger.info(f"Selected {cur.rowcount} voice sessions in guild {guild_id}")
-        con.close()
-        return result
-    except Exception as ex:
-        logger.exception("An error occurred while getting guild voice sessions:")
         print(ex)
