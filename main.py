@@ -5,10 +5,9 @@ from dotenv import load_dotenv
 from db.voice_session import save_join_datetime, save_leave_datetime
 from db.database_utils import active_sessions_cleanup
 from statbot.process_statistics import process_voice_sessions_for_statistics, \
-    process_voice_sessions_for_channel_statistics
+    process_data_for_channel_statistics, process_data_for_user_statistics
 from statbot.utils import total_time_to_hours_minutes
 from loguru import logger
-
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -75,7 +74,7 @@ async def afk(ctx):
 
 @bot.command()
 async def channels(ctx):
-    channels_data_list = process_voice_sessions_for_channel_statistics(ctx.guild.id)
+    channels_data_list = process_data_for_channel_statistics(ctx.guild.id)
     content = "Most used channels.\n \n"
 
     for index, channel_data in enumerate(channels_data_list, 1):
@@ -92,5 +91,33 @@ async def channels(ctx):
                           color=744700)
 
     await ctx.send(embed=embed)
+
+
+@bot.command()
+async def user(ctx, member: discord.Member):
+    try:
+        usage_data = process_data_for_user_statistics(member)
+
+        if usage_data.get('status') == 'no-data':
+            content = usage_data['message']
+        else:
+            fav_channel_name = bot.get_channel(usage_data['most_used_channel']['id'])
+            content = f"Total voice sessions: **{usage_data['total_voice_sessions']}**\n" \
+                      f"Most used channel: **{fav_channel_name} ({usage_data['most_used_channel']['time']})**\n" \
+                      f"Connected to voice channels: **{usage_data['on_voice_time']}**\n" \
+                      f"AFK time: **{usage_data['afk_time']}**\n" \
+                      f"Roles: **{usage_data['roles']}**\n" \
+                      f"Joined guild: **{usage_data['join_date']}**"
+
+        embed = discord.Embed(title=f"Statistics",
+                              description=content,
+                              color=744700)
+        embed.set_author(name=member.display_name, icon_url=member.avatar_url)
+
+        await ctx.send(embed=embed)
+
+    except Exception as Ex:
+        logger.exception("An error occurred while getting channel usage:")
+        print(Ex)
 
 bot.run(TOKEN)
