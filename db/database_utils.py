@@ -3,7 +3,10 @@ from dotenv import load_dotenv
 import psycopg2
 from loguru import logger
 
-load_dotenv()
+# ENV = os.environ.get('ENV')
+ENV = '.env.development'
+
+load_dotenv(ENV)
 db_name = os.getenv('DB_NAME')
 db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD')

@@ -9,7 +9,10 @@ from statbot.process_statistics import process_voice_sessions_for_statistics, \
 from statbot.utils import total_time_to_hours_minutes
 from loguru import logger
 
-load_dotenv()
+# ENV = os.environ.get('ENV')
+ENV = '.env.development'
+
+load_dotenv(ENV)
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 intents = discord.Intents(messages=True, guilds=True, members=True, voice_states=True)
@@ -119,5 +122,6 @@ async def user(ctx, member: discord.Member):
     except Exception as Ex:
         logger.exception("An error occurred while getting channel usage:")
         print(Ex)
+
 
 bot.run(TOKEN)
