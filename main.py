@@ -45,8 +45,8 @@ async def ranks(ctx):
 
     for index, voice_session in enumerate(statistics_list, 1):
         try:
-            user = bot.get_user(voice_session.user_id)
-            content += f"**{index} - {user.display_name}** ({voice_session.total_time})\n"
+            user_ = bot.get_user(voice_session.user_id)
+            content += f"**{index} - {user_.display_name}** ({voice_session.total_time})\n"
         except Exception as Ex:
             logger.exception("An error occurred while getting guild rank for voice sessions:")
             print(Ex)
@@ -65,8 +65,8 @@ async def afk(ctx):
 
     for index, voice_session in enumerate(afk_time_list, 1):
         try:
-            user = bot.get_user(voice_session.user_id)
-            content += f"**{index} - {user.display_name}** ({voice_session.total_time})\n"
+            user_ = bot.get_user(voice_session.user_id)
+            content += f"**{index} - {user_.display_name}** ({voice_session.total_time})\n"
         except Exception as Ex:
             logger.exception("An error occurred while getting AFK time by user:")
             print(Ex)
