@@ -17,6 +17,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 
 intents = discord.Intents(messages=True, guilds=True, members=True, voice_states=True)
 bot = commands.Bot(command_prefix='.statbot ', intents=intents)
+bot.remove_command("help")
 
 
 @bot.event
@@ -123,5 +124,16 @@ async def user(ctx, member: discord.Member):
         logger.exception("An error occurred while getting channel usage:")
         print(Ex)
 
+
+@bot.command()
+async def help(ctx):
+    content = "**ranks** (Voice channels usage ranking by user)\n" \
+              "**afk** (AFK channel usage by user)\n" \
+              "**channels** (Voice channels usage time)\n" \
+              "**user** @user (User stats)\n"
+    embed = discord.Embed(title="Statbot Commands", description=content, color=744700)
+    embed.set_footer(text="(Use .statbot <command>)")
+    await ctx.author.send(embed=embed)
+    await ctx.message.add_reaction("✅")
 
 bot.run(TOKEN)
