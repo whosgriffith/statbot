@@ -23,6 +23,8 @@ bot.remove_command("help")
 @bot.event
 async def on_ready():
     active_sessions_cleanup()
+    activity = discord.Game(name=".statbot help")
+    await bot.change_presence(activity=activity)
 
 
 @bot.event
