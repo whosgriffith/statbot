@@ -1,17 +1,12 @@
 import os
-from dotenv import load_dotenv
 import psycopg2
 from loguru import logger
 
-# ENV = os.environ.get('ENV')
-ENV = '.env.development'
-
-load_dotenv(ENV)
-db_name = os.getenv('DB_NAME')
-db_user = os.getenv('DB_USER')
-db_password = os.getenv('DB_PASSWORD')
-db_host = os.getenv('DB_HOST')
-db_port = os.getenv('DB_PORT')
+db_name = os.environ.get('DB_NAME')
+db_user = os.environ.get('DB_USER')
+db_password = os.environ.get('DB_PASSWORD')
+db_host = os.environ.get('DB_HOST')
+db_port = os.environ.get('DB_PORT')
 
 
 def db_connect_and_cursor():
