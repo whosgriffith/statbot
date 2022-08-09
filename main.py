@@ -1,7 +1,6 @@
 import os
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
 from db.voice_session import save_join_datetime, save_leave_datetime
 from db.database_utils import active_sessions_cleanup
 from statbot.process_statistics import process_voice_sessions_for_statistics, \
@@ -9,11 +8,7 @@ from statbot.process_statistics import process_voice_sessions_for_statistics, \
 from statbot.utils import total_time_to_hours_minutes
 from loguru import logger
 
-# ENV = os.environ.get('ENV')
-ENV = '.env.development'
-
-load_dotenv(ENV)
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN = os.environ.get('DISCORD_TOKEN')
 
 intents = discord.Intents(messages=True, guilds=True, members=True, voice_states=True)
 bot = commands.Bot(command_prefix='.statbot ', intents=intents)
