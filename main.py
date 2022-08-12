@@ -124,9 +124,9 @@ async def user(ctx, member: discord.Member):
 
 @bot.command()
 async def help(ctx):
-    content = "**ranks** (Voice channels usage ranking by user)\n" \
+    content = "**ranks** (Voice channels usage ranked by user)\n" \
               "**afk** (AFK channel usage by user)\n" \
-              "**channels** (Voice channels usage time)\n" \
+              "**channels** (Voice channels usage)\n" \
               "**user** @user (User stats)\n"
     embed = discord.Embed(title="Statbot Commands", description=content, color=744700)
     embed.set_footer(text="(Use .statbot <command>)")
